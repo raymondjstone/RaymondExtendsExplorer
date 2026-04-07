@@ -1,0 +1,41 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <Package Name="Raymond Extends Explorer"
+           Manufacturer="Raymond"
+           Version="$(var.Version)"
+           UpgradeCode="A3F2B8C1-7D4E-4A9F-B6E5-1C8D3F2A7B9E"
+           Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="RaymondExtendsExplorer">
+
+        <Component Id="MainExecutable" Guid="D4E5F6A7-B8C9-4D0E-A1F2-3B4C5D6E7F80">
+          <File Id="ExeFile" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.exe" KeyPath="yes" />
+
+          <!-- Set all files as today -->
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
+                         Value="Set all files as today" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
+                         Type="string" />
+
+          <!-- Moved to Just Watched -->
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
+                         Value="Moved to Just Watched" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-to-just-watched &quot;%V&quot;"
+                         Type="string" />
+        </Component>
+
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="Raymond Extends Explorer" Level="1">
+      <ComponentRef Id="MainExecutable" />
+    </Feature>
+
+  </Package>
+
+</Wix>

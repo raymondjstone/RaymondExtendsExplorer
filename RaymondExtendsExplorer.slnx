@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="RaymondExtendsExplorer.csproj" />
+  <Project Path="Installer\Installer.wixproj" />
+</Solution>
