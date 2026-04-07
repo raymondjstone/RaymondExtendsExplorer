@@ -8,11 +8,11 @@ if (args.Length < 2)
 }
 
 var command = args[0];
-var folderPath = args[1];
+var folderPath = args[1].TrimEnd('\\', '/');
 
 if (!Directory.Exists(folderPath))
 {
-    MessageBox.Show($"Folder not found:\n{folderPath}",
+    MessageBox.Show($"Folder not found:\n{folderPath}\n\nAll args: {string.Join(" | ", args)}",
         "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
     return 1;
 }
@@ -30,17 +30,31 @@ static int SetAllFilesAsToday(string folderPath)
     var errors = new List<string>();
     int count = 0;
 
-    foreach (var file in Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories))
+    try
     {
-        try
+        foreach (var file in Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories))
         {
-            File.SetLastWriteTime(file, now);
-            count++;
+            try
+            {
+                File.SetLastWriteTime(file, now);
+                count++;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                errors.Add($"{file}: {ex.Message}");
+            }
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            errors.Add($"{file}: {ex.Message}");
-        }
+    }
+    catch (Exception ex)
+    {
+        return ShowError($"Failed to enumerate files in:\n{folderPath}\n\n{ex.Message}");
+    }
+
+    if (count == 0 && errors.Count == 0)
+    {
+        MessageBox.Show($"No files found under:\n{folderPath}",
+            "Set All Files As Today", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        return 0;
     }
 
     if (errors.Count > 0)
@@ -50,6 +64,11 @@ static int SetAllFilesAsToday(string folderPath)
             summary += $"\n... and {errors.Count - 20} more";
         MessageBox.Show($"Updated {count} files.\n\nFailed to update {errors.Count} files:\n{summary}",
             "Set All Files As Today", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+    else
+    {
+        MessageBox.Show($"Updated {count} files to {now:yyyy-MM-dd HH:mm:ss}.",
+            "Set All Files As Today", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     return 0;
