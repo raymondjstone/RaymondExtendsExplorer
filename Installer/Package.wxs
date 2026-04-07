@@ -14,6 +14,9 @@
 
         <Component Id="MainExecutable" Guid="D4E5F6A7-B8C9-4D0E-A1F2-3B4C5D6E7F80">
           <File Id="ExeFile" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.exe" KeyPath="yes" />
+          <File Id="DllFile" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.dll" />
+          <File Id="DepsJson" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.deps.json" />
+          <File Id="RuntimeConfig" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.runtimeconfig.json" />
 
           <!-- Set all files as today -->
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
