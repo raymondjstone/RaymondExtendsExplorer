@@ -18,14 +18,21 @@
           <File Id="DepsJson" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.deps.json" />
           <File Id="RuntimeConfig" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.runtimeconfig.json" />
 
-          <!-- Set all files as today -->
+          <!-- Set all files as today - folder context menu -->
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
                          Value="Set all files as today" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
                          Type="string" />
 
-          <!-- Moved to Just Watched -->
+          <!-- Set all files as today - file context menu -->
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
+                         Value="Set all files as today" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
+                         Type="string" />
+
+          <!-- Moved to Just Watched - folder context menu -->
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
                          Value="Moved to Just Watched" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched\command"

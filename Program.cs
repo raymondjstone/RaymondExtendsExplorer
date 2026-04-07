@@ -2,57 +2,75 @@ using System.Windows.Forms;
 
 if (args.Length < 2)
 {
-    MessageBox.Show("Usage: RaymondExtendsExplorer.exe <command> <folder-path>",
+    MessageBox.Show("Usage: RaymondExtendsExplorer.exe <command> <path> [<path> ...]",
         "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
     return 1;
 }
 
 var command = args[0];
-var folderPath = args[1].TrimEnd('\\', '/');
+var paths = args.Skip(1).Select(p => p.TrimEnd('\\', '/')).ToList();
 
-if (!Directory.Exists(folderPath))
+var invalid = paths.Where(p => !Directory.Exists(p) && !File.Exists(p)).ToList();
+if (invalid.Count > 0)
 {
-    MessageBox.Show($"Folder not found:\n{folderPath}\n\nAll args: {string.Join(" | ", args)}",
+    MessageBox.Show($"Paths not found:\n{string.Join("\n", invalid)}",
         "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
     return 1;
 }
 
 return command switch
 {
-    "set-today" => SetAllFilesAsToday(folderPath),
-    "move-to-just-watched" => MoveToJustWatched(folderPath),
+    "set-today" => SetAllFilesAsToday(paths),
+    "move-to-just-watched" => MoveToJustWatched(paths),
     _ => ShowError($"Unknown command: {command}")
 };
 
-static int SetAllFilesAsToday(string folderPath)
+static int SetAllFilesAsToday(List<string> paths)
 {
     var now = DateTime.Now;
     var errors = new List<string>();
     int count = 0;
 
-    try
+    foreach (var path in paths)
     {
-        foreach (var file in Directory.EnumerateFiles(folderPath, "*", SearchOption.AllDirectories))
+        if (File.Exists(path) && !Directory.Exists(path))
         {
             try
             {
-                File.SetLastWriteTime(file, now);
+                File.SetLastWriteTime(path, now);
                 count++;
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                errors.Add($"{file}: {ex.Message}");
+                errors.Add($"{path}: {ex.Message}");
+            }
+            continue;
+        }
+
+        try
+        {
+            foreach (var file in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    File.SetLastWriteTime(file, now);
+                    count++;
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    errors.Add($"{file}: {ex.Message}");
+                }
             }
         }
-    }
-    catch (Exception ex)
-    {
-        return ShowError($"Failed to enumerate files in:\n{folderPath}\n\n{ex.Message}");
+        catch (Exception ex)
+        {
+            errors.Add($"{path}: {ex.Message}");
+        }
     }
 
     if (count == 0 && errors.Count == 0)
     {
-        MessageBox.Show($"No files found under:\n{folderPath}",
+        MessageBox.Show($"No files found.",
             "Set All Files As Today", MessageBoxButtons.OK, MessageBoxIcon.Information);
         return 0;
     }
@@ -74,39 +92,86 @@ static int SetAllFilesAsToday(string folderPath)
     return 0;
 }
 
-static int MoveToJustWatched(string folderPath)
+static int MoveToJustWatched(List<string> paths)
 {
-    var parentDir = Directory.GetParent(folderPath);
-    if (parentDir == null)
-        return ShowError("Cannot determine parent folder.");
+    var errors = new List<string>();
+    int moved = 0;
 
-    if (!string.Equals(parentDir.Name, "NotWatched", StringComparison.OrdinalIgnoreCase))
-        return ShowError($"Parent folder is not named 'NotWatched'.\nParent: {parentDir.Name}");
-
-    var grandparentDir = parentDir.Parent;
-    if (grandparentDir == null)
-        return ShowError("Cannot determine grandparent folder.");
-
-    var justWatchedDir = Path.Combine(grandparentDir.FullName, "JustWatched");
-    if (!Directory.Exists(justWatchedDir))
-        return ShowError($"'JustWatched' folder not found at:\n{justWatchedDir}");
-
-    var folderName = Path.GetFileName(folderPath);
-    var destination = Path.Combine(justWatchedDir, folderName);
-
-    if (Directory.Exists(destination))
-        return ShowError($"A folder named '{folderName}' already exists in JustWatched.");
-
-    try
+    foreach (var folderPath in paths)
     {
-        Directory.Move(folderPath, destination);
-    }
-    catch (Exception ex)
-    {
-        return ShowError($"Failed to move folder:\n{ex.Message}");
+        if (!Directory.Exists(folderPath))
+        {
+            errors.Add($"{folderPath}: not a folder, skipped.");
+            continue;
+        }
+
+        var parentDir = Directory.GetParent(folderPath);
+        if (parentDir == null)
+        {
+            errors.Add($"{folderPath}: cannot determine parent folder.");
+            continue;
+        }
+
+        if (!string.Equals(parentDir.Name, "NotWatched", StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add($"{folderPath}: parent is '{parentDir.Name}', not 'NotWatched'.");
+            continue;
+        }
+
+        var grandparentDir = parentDir.Parent;
+        if (grandparentDir == null)
+        {
+            errors.Add($"{folderPath}: cannot determine grandparent folder.");
+            continue;
+        }
+
+        var justWatchedDir = Path.Combine(grandparentDir.FullName, "JustWatched");
+        if (!Directory.Exists(justWatchedDir))
+        {
+            errors.Add($"{folderPath}: 'JustWatched' folder not found at {justWatchedDir}.");
+            continue;
+        }
+
+        var folderName = Path.GetFileName(folderPath);
+        var destination = Path.Combine(justWatchedDir, folderName);
+
+        if (Directory.Exists(destination))
+        {
+            errors.Add($"{folderName}: already exists in JustWatched.");
+            continue;
+        }
+
+        try
+        {
+            Directory.Move(folderPath, destination);
+            moved++;
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"{folderName}: {ex.Message}");
+        }
     }
 
-    return 0;
+    if (moved == 0 && errors.Count == 0)
+        return 0;
+
+    if (errors.Count > 0)
+    {
+        var summary = string.Join("\n", errors.Take(20));
+        if (errors.Count > 20)
+            summary += $"\n... and {errors.Count - 20} more";
+        var msg = moved > 0
+            ? $"Moved {moved} folder(s).\n\nErrors:\n{summary}"
+            : $"Failed to move:\n{summary}";
+        MessageBox.Show(msg, "Moved to Just Watched", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+    else
+    {
+        MessageBox.Show($"Moved {moved} folder(s) to JustWatched.",
+            "Moved to Just Watched", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    return errors.Count > 0 ? 1 : 0;
 }
 
 static int ShowError(string message)
