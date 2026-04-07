@@ -61,8 +61,8 @@ static int MoveToJustWatched(string folderPath)
     if (parentDir == null)
         return ShowError("Cannot determine parent folder.");
 
-    if (!string.Equals(parentDir.Name, "Unwatched", StringComparison.OrdinalIgnoreCase))
-        return ShowError($"Parent folder is not named 'Unwatched'.\nParent: {parentDir.Name}");
+    if (!string.Equals(parentDir.Name, "NotWatched", StringComparison.OrdinalIgnoreCase))
+        return ShowError($"Parent folder is not named 'NotWatched'.\nParent: {parentDir.Name}");
 
     var grandparentDir = parentDir.Parent;
     if (grandparentDir == null)
