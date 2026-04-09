@@ -3,16 +3,34 @@
 
 Write-Host "Cleaning up old Raymond Extends Explorer registry entries..." -ForegroundColor Cyan
 
-# Remove old folder context menu entries
-Remove-Item 'HKCR:\Directory\shell\RaymondSetToday' -Recurse -ErrorAction SilentlyContinue
-Remove-Item 'HKCR:\Directory\shell\RaymondMoveToJustWatched' -Recurse -ErrorAction SilentlyContinue
-Remove-Item 'HKCR:\Directory\shell\RaymondSep1' -Recurse -ErrorAction SilentlyContinue
-Remove-Item 'HKCR:\Directory\shell\RaymondSep2' -Recurse -ErrorAction SilentlyContinue
+# Remove old folder context menu entries (all naming variants)
+$folderKeys = @(
+    'HKCR:\Directory\shell\RaymondSetToday',
+    'HKCR:\Directory\shell\RaymondMoveToJustWatched',
+    'HKCR:\Directory\shell\RaymondSep1',
+    'HKCR:\Directory\shell\RaymondSep2',
+    'HKCR:\Directory\shell\Raymond_0_Separator',
+    'HKCR:\Directory\shell\Raymond_1_SetToday',
+    'HKCR:\Directory\shell\Raymond_2_MoveToJustWatched',
+    'HKCR:\Directory\shell\Raymond_9_Separator'
+)
 
-# Remove old file context menu entries
-Remove-Item 'HKCR:\*\shell\RaymondSetToday' -Recurse -ErrorAction SilentlyContinue
-Remove-Item 'HKCR:\*\shell\RaymondSep1' -Recurse -ErrorAction SilentlyContinue
-Remove-Item 'HKCR:\*\shell\RaymondSep2' -Recurse -ErrorAction SilentlyContinue
+# Remove old file context menu entries (all naming variants)
+$fileKeys = @(
+    'HKCR:\*\shell\RaymondSetToday',
+    'HKCR:\*\shell\RaymondSep1',
+    'HKCR:\*\shell\RaymondSep2',
+    'HKCR:\*\shell\Raymond_0_Separator',
+    'HKCR:\*\shell\Raymond_1_SetToday',
+    'HKCR:\*\shell\Raymond_9_Separator'
+)
+
+foreach ($key in ($folderKeys + $fileKeys)) {
+    if (Test-Path $key) {
+        Remove-Item $key -Recurse -Force
+        Write-Host "  Removed: $key" -ForegroundColor Yellow
+    }
+}
 
 Write-Host "Registry cleanup complete!" -ForegroundColor Green
 Write-Host ""
