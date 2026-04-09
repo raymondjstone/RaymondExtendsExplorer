@@ -19,33 +19,33 @@
           <File Id="RuntimeConfig" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.runtimeconfig.json" />
 
           <!-- Separator before Raymond extensions - folder -->
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSep1"
-                         Value="-" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSep1"
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_0_Separator"
+                         Value="------------------------" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_0_Separator"
                          Name="CommandFlags" Value="64" Type="integer" />
 
           <!-- Set all files as today - folder context menu -->
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_1_SetToday"
                          Value="Set all files as today" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
-                         Name="Icon" Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot;,0" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday\command"
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_1_SetToday"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_1_SetToday\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
                          Type="string" />
 
           <!-- Moved to Just Watched - folder context menu -->
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_2_MoveToJustWatched"
                          Value="Moved to Just Watched" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
-                         Name="Icon" Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot;,0" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched\command"
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_2_MoveToJustWatched"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_2_MoveToJustWatched\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-to-just-watched &quot;%V&quot;"
                          Type="string" />
 
           <!-- Separator after Raymond extensions - folder -->
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSep2"
-                         Value="-" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSep2"
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_9_Separator"
+                         Value="------------------------" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_9_Separator"
                          Name="CommandFlags" Value="64" Type="integer" />
 
           <!-- Separator before Raymond extensions - file -->
