@@ -1,4 +1,25 @@
+using System.Text.Json;
 using System.Windows.Forms;
+
+if (args.Length < 1)
+{
+    MessageBox.Show("Usage: RaymondExtendsExplorer.exe <command> <path> [<path> ...]",
+        "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    return 1;
+}
+
+var command = args[0];
+
+if (command == "toggle-confirmations")
+{
+    var s = Settings.Load();
+    s.ShowConfirmations = !s.ShowConfirmations;
+    s.Save();
+    MessageBox.Show(
+        $"Confirmations are now {(s.ShowConfirmations ? "enabled" : "disabled")}.",
+        "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    return 0;
+}
 
 if (args.Length < 2)
 {
@@ -7,7 +28,6 @@ if (args.Length < 2)
     return 1;
 }
 
-var command = args[0];
 var paths = args.Skip(1).Select(p => p.TrimEnd('\\', '/')).ToList();
 
 var invalid = paths.Where(p => !Directory.Exists(p) && !File.Exists(p)).ToList();
@@ -18,14 +38,16 @@ if (invalid.Count > 0)
     return 1;
 }
 
+var settings = Settings.Load();
+
 return command switch
 {
-    "set-today" => SetAllFilesAsToday(paths),
-    "move-to-just-watched" => MoveToJustWatched(paths),
+    "set-today" => SetAllFilesAsToday(paths, settings.ShowConfirmations),
+    "move-to-just-watched" => MoveToJustWatched(paths, settings.ShowConfirmations),
     _ => ShowError($"Unknown command: {command}")
 };
 
-static int SetAllFilesAsToday(List<string> paths)
+static int SetAllFilesAsToday(List<string> paths, bool showConfirmations)
 {
     var now = DateTime.Now;
     var errors = new List<string>();
@@ -68,6 +90,9 @@ static int SetAllFilesAsToday(List<string> paths)
         }
     }
 
+    if (!showConfirmations)
+        return errors.Count > 0 ? 1 : 0;
+
     if (count == 0 && errors.Count == 0)
     {
         MessageBox.Show($"No files found.",
@@ -92,7 +117,7 @@ static int SetAllFilesAsToday(List<string> paths)
     return 0;
 }
 
-static int MoveToJustWatched(List<string> paths)
+static int MoveToJustWatched(List<string> paths, bool showConfirmations)
 {
     var errors = new List<string>();
     int moved = 0;
@@ -152,6 +177,9 @@ static int MoveToJustWatched(List<string> paths)
         }
     }
 
+    if (!showConfirmations)
+        return errors.Count > 0 ? 1 : 0;
+
     if (moved == 0 && errors.Count == 0)
         return 0;
 
@@ -178,4 +206,35 @@ static int ShowError(string message)
 {
     MessageBox.Show(message, "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
     return 1;
+}
+
+class Settings
+{
+    static readonly string SettingsDir = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "RaymondExtendsExplorer");
+    static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
+
+    public bool ShowConfirmations { get; set; }
+
+    public static Settings Load()
+    {
+        try
+        {
+            if (File.Exists(SettingsFile))
+            {
+                var json = File.ReadAllText(SettingsFile);
+                return JsonSerializer.Deserialize<Settings>(json) ?? new Settings();
+            }
+        }
+        catch { }
+        return new Settings();
+    }
+
+    public void Save()
+    {
+        Directory.CreateDirectory(SettingsDir);
+        var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(SettingsFile, json);
+    }
 }

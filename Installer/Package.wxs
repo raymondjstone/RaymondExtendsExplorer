@@ -30,15 +30,24 @@
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-to-just-watched &quot;%V&quot;"
                          Type="string" />
 
-          <!-- Set all files as today - folder context menu (alphabetically second) -->
+          <!-- Set all files as today - folder context menu -->
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
                          Value="Set all files as today" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
                          Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
-                         Name="SeparatorAfter" Value="" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
+                         Type="string" />
+
+          <!-- Toggle Confirmations - folder context menu (alphabetically last) -->
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondToggleConfirmations"
+                         Value="Toggle Confirmations" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondToggleConfirmations"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondToggleConfirmations"
+                         Name="SeparatorAfter" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondToggleConfirmations\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; toggle-confirmations"
                          Type="string" />
 
           <!-- Set all files as today - file context menu -->
