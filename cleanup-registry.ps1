@@ -3,7 +3,7 @@
 
 Write-Host "Cleaning up old Raymond Extends Explorer registry entries..." -ForegroundColor Cyan
 
-# Remove old folder context menu entries (all naming variants)
+# Remove all folder context menu entries (all naming variants used across versions)
 $folderKeys = @(
     'HKCR:\Directory\shell\RaymondSetToday',
     'HKCR:\Directory\shell\RaymondMoveToJustWatched',
@@ -15,7 +15,7 @@ $folderKeys = @(
     'HKCR:\Directory\shell\Raymond_9_Separator'
 )
 
-# Remove old file context menu entries (all naming variants)
+# Remove all file context menu entries (all naming variants used across versions)
 $fileKeys = @(
     'HKCR:\*\shell\RaymondSetToday',
     'HKCR:\*\shell\RaymondSep1',
@@ -41,4 +41,4 @@ ie4uinit.exe -show
 
 Write-Host "Icon cache cleared!" -ForegroundColor Green
 Write-Host ""
-Write-Host "Now you can install the updated MSI installer." -ForegroundColor Yellow
+Write-Host "Now rebuild the MSI installer and install it." -ForegroundColor Yellow

@@ -17,34 +17,35 @@
           <File Id="DllFile" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.dll" />
           <File Id="DepsJson" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.deps.json" />
           <File Id="RuntimeConfig" Source="$(RaymondExtendsExplorer.TargetDir)\RaymondExtendsExplorer.runtimeconfig.json" />
+          <File Id="AppIcon" Source="$(RaymondExtendsExplorer.ProjectDir)\app.ico" />
 
-          <!-- Set all files as today - folder context menu -->
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
-                         Value="Set all files as today" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
-                         Name="Icon" Value="[INSTALLFOLDER]RaymondExtendsExplorer.exe,0" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
-                         Name="SeparatorBefore" Value="" Type="string" />
-          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday\command"
-                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
-                         Type="string" />
-
-          <!-- Moved to Just Watched - folder context menu -->
+          <!-- Moved to Just Watched - folder context menu (alphabetically first) -->
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
                          Value="Moved to Just Watched" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
-                         Name="Icon" Value="[INSTALLFOLDER]RaymondExtendsExplorer.exe,0" Type="string" />
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched"
-                         Name="SeparatorAfter" Value="" Type="string" />
+                         Name="SeparatorBefore" Value="" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondMoveToJustWatched\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-to-just-watched &quot;%V&quot;"
+                         Type="string" />
+
+          <!-- Set all files as today - folder context menu (alphabetically second) -->
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
+                         Value="Set all files as today" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday"
+                         Name="SeparatorAfter" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondSetToday\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
                          Type="string" />
 
           <!-- Set all files as today - file context menu -->
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
                          Value="Set all files as today" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
-                         Name="Icon" Value="[INSTALLFOLDER]RaymondExtendsExplorer.exe,0" Type="string" />
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
                          Name="SeparatorBefore" Value="" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
