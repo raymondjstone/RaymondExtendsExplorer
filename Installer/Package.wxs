@@ -20,9 +20,11 @@
 
           <!-- Separator before Raymond extensions - folder -->
           <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_0_Separator"
-                         Value="------------------------" Type="string" />
+                         Value="-" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_0_Separator"
-                         Name="CommandFlags" Value="64" Type="integer" />
+                         Name="MUIVerb" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_0_Separator"
+                         Name="CommandFlags" Value="32" Type="integer" />
 
           <!-- Set all files as today - folder context menu -->
           <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_1_SetToday"
@@ -44,15 +46,19 @@
 
           <!-- Separator after Raymond extensions - folder -->
           <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_9_Separator"
-                         Value="------------------------" Type="string" />
+                         Value="-" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_9_Separator"
-                         Name="CommandFlags" Value="64" Type="integer" />
+                         Name="MUIVerb" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\Raymond_9_Separator"
+                         Name="CommandFlags" Value="32" Type="integer" />
 
           <!-- Separator before Raymond extensions - file -->
           <RegistryValue Root="HKCR" Key="*\shell\Raymond_0_Separator"
                          Value="-" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\Raymond_0_Separator"
-                         Name="CommandFlags" Value="64" Type="integer" />
+                         Name="MUIVerb" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_0_Separator"
+                         Name="CommandFlags" Value="32" Type="integer" />
 
           <!-- Set all files as today - file context menu -->
           <RegistryValue Root="HKCR" Key="*\shell\Raymond_1_SetToday"
@@ -67,7 +73,9 @@
           <RegistryValue Root="HKCR" Key="*\shell\Raymond_9_Separator"
                          Value="-" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\Raymond_9_Separator"
-                         Name="CommandFlags" Value="64" Type="integer" />
+                         Name="MUIVerb" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_9_Separator"
+                         Name="CommandFlags" Value="32" Type="integer" />
         </Component>
 
       </Directory>
