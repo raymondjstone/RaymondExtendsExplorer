@@ -49,24 +49,24 @@
                          Name="CommandFlags" Value="64" Type="integer" />
 
           <!-- Separator before Raymond extensions - file -->
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSep1"
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_0_Separator"
                          Value="-" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSep1"
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_0_Separator"
                          Name="CommandFlags" Value="64" Type="integer" />
 
           <!-- Set all files as today - file context menu -->
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_1_SetToday"
                          Value="Set all files as today" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
-                         Name="Icon" Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot;,0" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday\command"
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_1_SetToday"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_1_SetToday\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; set-today &quot;%V&quot;"
                          Type="string" />
 
           <!-- Separator after Raymond extensions - file -->
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSep2"
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_9_Separator"
                          Value="-" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSep2"
+          <RegistryValue Root="HKCR" Key="*\shell\Raymond_9_Separator"
                          Name="CommandFlags" Value="64" Type="integer" />
         </Component>
 
