@@ -291,6 +291,109 @@ static int ShowError(string message)
     return 1;
 }
 
+static int MoveEpisodeToJustWatched(List<string> paths, bool showConfirmations)
+{
+    var errors = new List<string>();
+    int moved = 0;
+
+    foreach (var filePath in paths)
+    {
+        if (!File.Exists(filePath) || Directory.Exists(filePath))
+        {
+            errors.Add($"{filePath}: not a file, skipped.");
+            continue;
+        }
+
+        // Expect ...\\NotWatched\\<ShowName>\\Season...\\<file>
+        var dir = Path.GetDirectoryName(filePath);
+        if (dir == null)
+        {
+            errors.Add($"{filePath}: cannot determine parent folder.");
+            continue;
+        }
+        var parts = dir.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        // Find NotWatched in the path
+        int notWatchedIdx = Array.FindLastIndex(parts, p => string.Equals(p, "NotWatched", StringComparison.OrdinalIgnoreCase));
+        if (notWatchedIdx < 0 || notWatchedIdx + 2 >= parts.Length)
+        {
+            errors.Add($"{filePath}: not in NotWatched/Show/Season... structure.");
+            continue;
+        }
+        var showName = parts[notWatchedIdx + 1];
+        var seasonFolder = parts[notWatchedIdx + 2];
+        if (!seasonFolder.StartsWith("Season", StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add($"{filePath}: folder after show is not a Season folder.");
+            continue;
+        }
+
+        // Build destination path
+        var destParts = parts.ToArray();
+        destParts[notWatchedIdx] = "JustWatched";
+        var destDir = string.Join(Path.DirectorySeparatorChar.ToString(), destParts);
+        var destFile = Path.Combine(destDir, Path.GetFileName(filePath));
+
+        // Only require JustWatched to exist
+        var justWatchedRoot = string.Join(Path.DirectorySeparatorChar.ToString(), destParts.Take(notWatchedIdx + 1));
+        if (!Directory.Exists(justWatchedRoot))
+        {
+            errors.Add($"{filePath}: JustWatched folder does not exist: {justWatchedRoot}");
+            continue;
+        }
+
+        // Create subfolders as needed
+        try
+        {
+            Directory.CreateDirectory(destDir);
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"{filePath}: could not create destination folder: {destDir} ({ex.Message})");
+            continue;
+        }
+
+        if (File.Exists(destFile))
+        {
+            errors.Add($"{filePath}: already exists in JustWatched.");
+            continue;
+        }
+
+        try
+        {
+            File.Move(filePath, destFile);
+            moved++;
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"{filePath}: {ex.Message}");
+        }
+    }
+
+    if (!showConfirmations)
+        return errors.Count > 0 ? 1 : 0;
+
+    if (moved == 0 && errors.Count == 0)
+        return 0;
+
+    if (errors.Count > 0)
+    {
+        var summary = string.Join("\n", errors.Take(20));
+        if (errors.Count > 20)
+            summary += $"\n... and {errors.Count - 20} more";
+        var msg = moved > 0
+            ? $"Moved {moved} file(s).\n\nErrors:\n{summary}"
+            : $"Failed to move:\n{summary}";
+        MessageBox.Show(msg, "Move Episode to JustWatched", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+    else
+    {
+        MessageBox.Show($"Moved {moved} file(s) to JustWatched.",
+            "Move Episode to JustWatched", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    return errors.Count > 0 ? 1 : 0;
+}
+
 class Settings
 {
     static readonly string SettingsDir = Path.Combine(
