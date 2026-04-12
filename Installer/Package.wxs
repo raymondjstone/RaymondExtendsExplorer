@@ -61,6 +61,17 @@
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-to-show-folder &quot;%V&quot;"
                          Type="string" />
 
+          <!-- Move episode to JustWatched - file context menu -->
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveEpisodeToJustWatched"
+                         Value="Move episode to JustWatched" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveEpisodeToJustWatched"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveEpisodeToJustWatched"
+                         Name="SeparatorAfter" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveEpisodeToJustWatched\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-episode-to-just-watched &quot;%V&quot;"
+                         Type="string" />
+
           <!-- Set all files as today - file context menu -->
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
                          Value="Set all files as today" Type="string" />

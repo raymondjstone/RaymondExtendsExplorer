@@ -41,11 +41,13 @@ if (invalid.Count > 0)
 
 var settings = Settings.Load();
 
+
 return command switch
 {
     "set-today" => SetAllFilesAsToday(paths, settings.ShowConfirmations),
     "move-to-just-watched" => MoveToJustWatched(paths, settings.ShowConfirmations),
     "move-to-show-folder" => MoveToShowFolder(paths, settings.ShowConfirmations),
+    "move-episode-to-just-watched" => MoveEpisodeToJustWatched(paths, settings.ShowConfirmations),
     _ => ShowError($"Unknown command: {command}")
 };
 
