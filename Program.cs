@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 if (args.Length < 1)
@@ -44,6 +45,7 @@ return command switch
 {
     "set-today" => SetAllFilesAsToday(paths, settings.ShowConfirmations),
     "move-to-just-watched" => MoveToJustWatched(paths, settings.ShowConfirmations),
+    "move-to-show-folder" => MoveToShowFolder(paths, settings.ShowConfirmations),
     _ => ShowError($"Unknown command: {command}")
 };
 
@@ -197,6 +199,85 @@ static int MoveToJustWatched(List<string> paths, bool showConfirmations)
     {
         MessageBox.Show($"Moved {moved} folder(s) to JustWatched.",
             "Moved to Just Watched", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    return errors.Count > 0 ? 1 : 0;
+}
+
+static int MoveToShowFolder(List<string> paths, bool showConfirmations)
+{
+    var episodePattern = new Regex(@"[Ss]\d{1,2}[Ee]\d{1,2}|\d{1,2}[Xx]\d{1,2}", RegexOptions.None);
+    var errors = new List<string>();
+    int moved = 0;
+
+    foreach (var filePath in paths)
+    {
+        if (!File.Exists(filePath) || Directory.Exists(filePath))
+        {
+            errors.Add($"{filePath}: not a file, skipped.");
+            continue;
+        }
+
+        var fileName = Path.GetFileNameWithoutExtension(filePath);
+        var match = episodePattern.Match(fileName);
+
+        if (!match.Success)
+        {
+            errors.Add($"{Path.GetFileName(filePath)}: no episode pattern found (e.g. S01E01 or 1x01).");
+            continue;
+        }
+
+        var showName = fileName[..match.Index].Replace('.', ' ').Trim();
+
+        if (string.IsNullOrEmpty(showName))
+        {
+            errors.Add($"{Path.GetFileName(filePath)}: could not determine show name.");
+            continue;
+        }
+
+        var parentDir = Path.GetDirectoryName(filePath)!;
+        var showFolder = Path.Combine(parentDir, showName);
+
+        try
+        {
+            Directory.CreateDirectory(showFolder);
+            var destination = Path.Combine(showFolder, Path.GetFileName(filePath));
+
+            if (File.Exists(destination))
+            {
+                errors.Add($"{Path.GetFileName(filePath)}: already exists in '{showName}'.");
+                continue;
+            }
+
+            File.Move(filePath, destination);
+            moved++;
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"{Path.GetFileName(filePath)}: {ex.Message}");
+        }
+    }
+
+    if (!showConfirmations)
+        return errors.Count > 0 ? 1 : 0;
+
+    if (moved == 0 && errors.Count == 0)
+        return 0;
+
+    if (errors.Count > 0)
+    {
+        var summary = string.Join("\n", errors.Take(20));
+        if (errors.Count > 20)
+            summary += $"\n... and {errors.Count - 20} more";
+        var msg = moved > 0
+            ? $"Moved {moved} file(s).\n\nErrors:\n{summary}"
+            : $"Failed to move:\n{summary}";
+        MessageBox.Show(msg, "Move to Show Folder", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+    else
+    {
+        MessageBox.Show($"Moved {moved} file(s) to show folder(s).",
+            "Move to Show Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     return errors.Count > 0 ? 1 : 0;

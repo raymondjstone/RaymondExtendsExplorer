@@ -17,6 +17,7 @@ $folderKeys = @(
 
 # Remove all file context menu entries (all naming variants used across versions)
 $fileKeys = @(
+    'HKCR:\*\shell\RaymondMoveToShowFolder',
     'HKCR:\*\shell\RaymondSetToday',
     'HKCR:\*\shell\RaymondSep1',
     'HKCR:\*\shell\RaymondSep2',

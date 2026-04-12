@@ -50,13 +50,22 @@
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; toggle-confirmations"
                          Type="string" />
 
+          <!-- Move to Show Folder - file context menu (alphabetically first) -->
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveToShowFolder"
+                         Value="Move to Show Folder" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveToShowFolder"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveToShowFolder"
+                         Name="SeparatorBefore" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondMoveToShowFolder\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; move-to-show-folder &quot;%V&quot;"
+                         Type="string" />
+
           <!-- Set all files as today - file context menu -->
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
                          Value="Set all files as today" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
                          Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
-                         Name="SeparatorBefore" Value="" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday"
                          Name="SeparatorAfter" Value="" Type="string" />
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSetToday\command"
