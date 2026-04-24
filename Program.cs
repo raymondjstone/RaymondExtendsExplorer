@@ -48,6 +48,7 @@ return command switch
     "move-to-just-watched" => MoveToJustWatched(paths, settings.ShowConfirmations),
     "move-to-show-folder" => MoveToShowFolder(paths, settings.ShowConfirmations),
     "move-episode-to-just-watched" => MoveEpisodeToJustWatched(paths, settings.ShowConfirmations),
+    "flatten-structure" => FlattenStructure(paths, settings.ShowConfirmations),
     _ => ShowError($"Unknown command: {command}")
 };
 
@@ -280,6 +281,113 @@ static int MoveToShowFolder(List<string> paths, bool showConfirmations)
     {
         MessageBox.Show($"Moved {moved} file(s) to show folder(s).",
             "Move to Show Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    return errors.Count > 0 ? 1 : 0;
+}
+
+static int FlattenStructure(List<string> paths, bool showConfirmations)
+{
+    var errors = new List<string>();
+    int moved = 0;
+    int deleted = 0;
+
+    foreach (var rootPath in paths)
+    {
+        if (!Directory.Exists(rootPath))
+        {
+            errors.Add($"{rootPath}: not a folder, skipped.");
+            continue;
+        }
+
+        List<string> files;
+        try
+        {
+            files = Directory.EnumerateFiles(rootPath, "*", SearchOption.AllDirectories)
+                .Where(f => !string.Equals(Path.GetDirectoryName(f), rootPath, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"{rootPath}: {ex.Message}");
+            continue;
+        }
+
+        foreach (var filePath in files)
+        {
+            var fileName = Path.GetFileName(filePath);
+            var destination = Path.Combine(rootPath, fileName);
+
+            if (File.Exists(destination))
+            {
+                errors.Add($"{fileName}: already exists in root, skipped.");
+                continue;
+            }
+
+            try
+            {
+                File.Move(filePath, destination);
+                moved++;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                errors.Add($"{fileName}: {ex.Message}");
+            }
+        }
+
+        // Delete empty subdirectories deepest-first
+        try
+        {
+            var subdirs = Directory.EnumerateDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Length)
+                .ToList();
+
+            foreach (var dir in subdirs)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    try
+                    {
+                        Directory.Delete(dir);
+                        deleted++;
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add($"{Path.GetFileName(dir)}: could not delete: {ex.Message}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"{rootPath}: error cleaning up folders: {ex.Message}");
+        }
+    }
+
+    if (!showConfirmations)
+        return errors.Count > 0 ? 1 : 0;
+
+    if (moved == 0 && deleted == 0 && errors.Count == 0)
+    {
+        MessageBox.Show("No files to move.",
+            "Flatten Structure", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        return 0;
+    }
+
+    if (errors.Count > 0)
+    {
+        var summary = string.Join("\n", errors.Take(20));
+        if (errors.Count > 20)
+            summary += $"\n... and {errors.Count - 20} more";
+        var msg = moved > 0
+            ? $"Moved {moved} file(s), removed {deleted} empty folder(s).\n\nErrors:\n{summary}"
+            : $"Failed:\n{summary}";
+        MessageBox.Show(msg, "Flatten Structure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+    else
+    {
+        MessageBox.Show($"Moved {moved} file(s) to root, removed {deleted} empty folder(s).",
+            "Flatten Structure", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     return errors.Count > 0 ? 1 : 0;

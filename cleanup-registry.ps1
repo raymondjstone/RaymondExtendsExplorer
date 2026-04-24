@@ -5,6 +5,7 @@ Write-Host "Cleaning up old Raymond Extends Explorer registry entries..." -Foreg
 
 # Remove all folder context menu entries (all naming variants used across versions)
 $folderKeys = @(
+    'HKCR:\Directory\shell\RaymondFlattenStructure',
     'HKCR:\Directory\shell\RaymondSetToday',
     'HKCR:\Directory\shell\RaymondMoveToJustWatched',
     'HKCR:\Directory\shell\RaymondSep1',
