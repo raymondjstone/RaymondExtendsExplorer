@@ -26,6 +26,8 @@
                          Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondFlattenStructure"
                          Name="SeparatorBefore" Value="" Type="string" />
+          <RegistryValue Root="HKCR" Key="Directory\shell\RaymondFlattenStructure"
+                         Name="MultiSelectModel" Value="Player" Type="string" />
           <RegistryValue Root="HKCR" Key="Directory\shell\RaymondFlattenStructure\command"
                          Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; flatten-structure &quot;%V&quot;"
                          Type="string" />
