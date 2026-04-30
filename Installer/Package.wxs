@@ -115,8 +115,8 @@
                   Return="ignore" />
 
     <InstallExecuteSequence>
-      <Custom Action="RegisterRemarkableCA" After="InstallFiles">NOT REMOVE</Custom>
-      <Custom Action="UnregisterRemarkableCA" Before="RemoveFiles">REMOVE~="ALL"</Custom>
+      <Custom Action="RegisterRemarkableCA" After="InstallFiles" Condition="NOT REMOVE" />
+      <Custom Action="UnregisterRemarkableCA" Before="RemoveFiles" Condition='REMOVE~="ALL"' />
     </InstallExecuteSequence>
 
     <Feature Id="Main" Title="Raymond Extends Explorer" Level="1">

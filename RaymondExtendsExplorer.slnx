@@ -1,4 +1,7 @@
 <Solution>
   <Project Path="RaymondExtendsExplorer.csproj" />
-  <Project Path="Installer\Installer.wixproj" />
+  <Project Path="Installer\Installer.wixproj">
+    <Platform Project="x64" />
+    <Build />
+  </Project>
 </Solution>
