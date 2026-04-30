@@ -9,6 +9,12 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
+    <Property Id="REMARKABLE_EXE">
+      <DirectorySearch Id="RemarkableDir" Path="[ProgramFiles6432Folder]reMarkable" Depth="0">
+        <FileSearch Id="RemarkableExe" Name="reMarkable.exe" />
+      </DirectorySearch>
+    </Property>
+
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="RaymondExtendsExplorer">
 
@@ -95,11 +101,27 @@
                          Type="string" />
         </Component>
 
+        <Component Id="RemarkableContextMenu" Guid="C8D9E0F1-A2B3-4C4D-8E5F-6A7B8C9D0E1F">
+          <Condition>REMARKABLE_EXE</Condition>
+
+          <!-- Send to reMarkable - file context menu, single selection only -->
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
+                         Value="Send to reMarkable" Type="string" KeyPath="yes" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
+                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
+                         Name="MultiSelectModel" Value="Single" Type="string" />
+          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable\command"
+                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; send-to-remarkable &quot;%1&quot;"
+                         Type="string" />
+        </Component>
+
       </Directory>
     </StandardDirectory>
 
     <Feature Id="Main" Title="Raymond Extends Explorer" Level="1">
       <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="RemarkableContextMenu" />
     </Feature>
 
   </Package>

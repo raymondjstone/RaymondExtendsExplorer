@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -49,6 +50,7 @@ return command switch
     "move-to-show-folder" => MoveToShowFolder(paths, settings.ShowConfirmations),
     "move-episode-to-just-watched" => MoveEpisodeToJustWatched(paths, settings.ShowConfirmations),
     "flatten-structure" => FlattenStructure(paths, settings.ShowConfirmations),
+    "send-to-remarkable" => SendToRemarkable(paths),
     _ => ShowError($"Unknown command: {command}")
 };
 
@@ -397,6 +399,18 @@ static int ShowError(string message)
 {
     MessageBox.Show(message, "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Error);
     return 1;
+}
+
+static int SendToRemarkable(List<string> paths)
+{
+    const string remarkableExe = @"C:\Program Files\reMarkable\reMarkable.exe";
+    if (!File.Exists(remarkableExe))
+        return 0;
+
+    var psi = new ProcessStartInfo(remarkableExe);
+    psi.ArgumentList.Add(paths[0]);
+    Process.Start(psi);
+    return 0;
 }
 
 static int MoveEpisodeToJustWatched(List<string> paths, bool showConfirmations)
