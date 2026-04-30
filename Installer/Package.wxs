@@ -102,7 +102,6 @@
         </Component>
 
         <Component Id="RemarkableContextMenu" Guid="C8D9E0F1-A2B3-4C4D-8E5F-6A7B8C9D0E1F">
-          <Condition>REMARKABLE_EXE</Condition>
 
           <!-- Send to reMarkable - file context menu, single selection only -->
           <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
@@ -121,6 +120,10 @@
 
     <Feature Id="Main" Title="Raymond Extends Explorer" Level="1">
       <ComponentRef Id="MainExecutable" />
+    </Feature>
+
+    <Feature Id="RemarkableIntegration" Level="0">
+      <Condition Level="1">REMARKABLE_EXE</Condition>
       <ComponentRef Id="RemarkableContextMenu" />
     </Feature>
 
