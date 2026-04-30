@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 if (args.Length < 1)
 {
@@ -22,6 +23,12 @@ if (command == "toggle-confirmations")
         "Raymond Extends Explorer", MessageBoxButtons.OK, MessageBoxIcon.Information);
     return 0;
 }
+
+if (command == "register-remarkable")
+    return RegisterRemarkable();
+
+if (command == "unregister-remarkable")
+    return UnregisterRemarkable();
 
 if (args.Length < 2)
 {
@@ -411,6 +418,51 @@ static int SendToRemarkable(List<string> paths)
     psi.ArgumentList.Add(paths[0]);
     Process.Start(psi);
     return 0;
+}
+
+static int RegisterRemarkable()
+{
+    const string remarkableExe = @"C:\Program Files\reMarkable\reMarkable.exe";
+    const string subKey = @"SOFTWARE\Classes\*\shell\RaymondSendToRemarkable";
+
+    if (!File.Exists(remarkableExe))
+    {
+        UnregisterRemarkable();
+        return 0;
+    }
+
+    var exePath = Environment.ProcessPath!;
+    var installDir = Path.GetDirectoryName(exePath)!;
+
+    try
+    {
+        using var key = Registry.LocalMachine.CreateSubKey(subKey);
+        key.SetValue("", "Send to reMarkable");
+        key.SetValue("Icon", $"\"{Path.Combine(installDir, "app.ico")}\"");
+        key.SetValue("MultiSelectModel", "Single");
+        using var cmd = key.CreateSubKey("command");
+        cmd.SetValue("", $"\"{exePath}\" send-to-remarkable \"%1\"");
+        return 0;
+    }
+    catch (UnauthorizedAccessException)
+    {
+        return 1;
+    }
+}
+
+static int UnregisterRemarkable()
+{
+    try
+    {
+        Registry.LocalMachine.DeleteSubKeyTree(
+            @"SOFTWARE\Classes\*\shell\RaymondSendToRemarkable",
+            throwOnMissingSubKey: false);
+        return 0;
+    }
+    catch (UnauthorizedAccessException)
+    {
+        return 1;
+    }
 }
 
 static int MoveEpisodeToJustWatched(List<string> paths, bool showConfirmations)

@@ -9,12 +9,6 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
-    <Property Id="REMARKABLE_EXE">
-      <DirectorySearch Id="RemarkableDir" Path="[ProgramFiles6432Folder]reMarkable" Depth="0">
-        <FileSearch Id="RemarkableExe" Name="reMarkable.exe" />
-      </DirectorySearch>
-    </Property>
-
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="RaymondExtendsExplorer">
 
@@ -101,30 +95,32 @@
                          Type="string" />
         </Component>
 
-        <Component Id="RemarkableContextMenu" Guid="C8D9E0F1-A2B3-4C4D-8E5F-6A7B8C9D0E1F">
-
-          <!-- Send to reMarkable - file context menu, single selection only -->
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
-                         Value="Send to reMarkable" Type="string" KeyPath="yes" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
-                         Name="Icon" Value="&quot;[INSTALLFOLDER]app.ico&quot;" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable"
-                         Name="MultiSelectModel" Value="Single" Type="string" />
-          <RegistryValue Root="HKCR" Key="*\shell\RaymondSendToRemarkable\command"
-                         Value="&quot;[INSTALLFOLDER]RaymondExtendsExplorer.exe&quot; send-to-remarkable &quot;%1&quot;"
-                         Type="string" />
-        </Component>
-
       </Directory>
     </StandardDirectory>
 
+    <!-- Register reMarkable context menu entry after install (only if reMarkable.exe exists) -->
+    <CustomAction Id="RegisterRemarkableCA"
+                  FileRef="ExeFile"
+                  ExeCommand="register-remarkable"
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="ignore" />
+
+    <!-- Remove reMarkable context menu entry on uninstall -->
+    <CustomAction Id="UnregisterRemarkableCA"
+                  FileRef="ExeFile"
+                  ExeCommand="unregister-remarkable"
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="ignore" />
+
+    <InstallExecuteSequence>
+      <Custom Action="RegisterRemarkableCA" After="InstallFiles">NOT REMOVE</Custom>
+      <Custom Action="UnregisterRemarkableCA" Before="RemoveFiles">REMOVE~="ALL"</Custom>
+    </InstallExecuteSequence>
+
     <Feature Id="Main" Title="Raymond Extends Explorer" Level="1">
       <ComponentRef Id="MainExecutable" />
-    </Feature>
-
-    <Feature Id="RemarkableIntegration" Level="0">
-      <Condition Level="1">REMARKABLE_EXE</Condition>
-      <ComponentRef Id="RemarkableContextMenu" />
     </Feature>
 
   </Package>
